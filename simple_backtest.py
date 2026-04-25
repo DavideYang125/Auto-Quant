@@ -35,7 +35,7 @@ def trend_follow_strategy(df):
     return df
 
 def volatility_break_strategy(df):
-    """波动率突破策略"""
+    """波动率突破策略 - Round 2 改进版本"""
     high_low = df['high'] - df['low']
     high_close = np.abs(df['high'] - df['close'].shift())
     low_close = np.abs(df['low'] - df['close'].shift())
@@ -44,11 +44,18 @@ def volatility_break_strategy(df):
     df['atr'] = true_range.rolling(14).mean()
 
     df['kc_middle'] = df['close'].rolling(20).mean()
-    df['kc_upper'] = df['kc_middle'] + (1.5 * df['atr'])
+    df['kc_upper'] = df['kc_middle'] + (2 * df['atr'])  # 改回 2倍 ATR
     df['volatility_ratio'] = df['atr'] / df['close']
+    df['sma200'] = df['close'].rolling(200).mean()  # 加入 1d趋势过滤
 
     df['enter_long'] = 0
-    df.loc[(df['close'] > df['kc_middle']) & (df['volatility_ratio'] > 0.015), 'enter_long'] = 1
+    df.loc[
+        (df['close'] > df['kc_upper']) &  # 突破上轨
+        (df['volatility_ratio'] > 0.01) &  # 降低阈值: 0.015 → 0.01
+        (df['close'] > df['sma200']) &  # 加入趋势过滤
+        (df['close'] > df['close'].shift(1)),  # 价格上涨
+        'enter_long',
+    ] = 1
     return df
 
 # 回测引擎
