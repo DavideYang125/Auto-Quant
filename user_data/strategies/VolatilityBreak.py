@@ -49,11 +49,23 @@ class VolatilityBreak(IStrategy):
         dataframe["volatility_ratio"] = dataframe["atr"] / dataframe["close"]
         return dataframe
 
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        # ATR - 平均真实波动范围
+        dataframe["atr"] = ta.ATR(dataframe, timeperiod=14)
+        # 肯特纳通道
+        dataframe["kc_middle"] = ta.SMA(dataframe, timeperiod=20)
+        dataframe["kc_upper"] = dataframe["kc_middle"] + (2 * dataframe["atr"])
+        dataframe["kc_lower"] = dataframe["kc_middle"] - (2 * dataframe["atr"])
+        # 波动率水平 - ATR相对于价格的比率
+        dataframe["volatility_ratio"] = dataframe["atr"] / dataframe["close"]
+        return dataframe
+
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        # 入场：价格突破肯特纳通道上轨 + 高波动率 + 1d上升趋势
+        # 入场：价格突破肯特纳通道上轨 + 高波动率 + 1d上升趋势 + 价格上涨
         dataframe.loc[
             (dataframe["close"] > dataframe["kc_upper"]) &  # 突破上轨
             (dataframe["volatility_ratio"] > 0.02) &  # 波动率足够高
+            (dataframe["close"] > dataframe["sma200_1d"]) &  # 1d上升趋势过滤
             (dataframe["close"] > dataframe["close"].shift(1)),  # 价格上涨
             "enter_long",
         ] = 1
