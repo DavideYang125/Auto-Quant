@@ -58,6 +58,30 @@ def volatility_break_strategy(df):
     ] = 1
     return df
 
+def macd_momentum_strategy(df):
+    """MACD动量策略 - Round 3 新策略"""
+    # MACD计算
+    exp1 = df['close'].ewm(span=12).mean()
+    exp2 = df['close'].ewm(span=26).mean()
+    df['macd'] = exp1 - exp2
+    df['macd_signal'] = df['macd'].ewm(span=9).mean()
+    df['macd_hist'] = df['macd'] - df['macd_signal']
+    # ROC - 变化率
+    df['roc'] = (df['close'] / df['close'].shift(10) - 1) * 100
+
+    # MACD金叉检测
+    macd_cross = (df['macd'] > df['macd_signal']) & (df['macd'].shift(1) <= df['macd_signal'].shift(1))
+
+    df['enter_long'] = 0
+    df.loc[
+        macd_cross &  # MACD金叉
+        (df['macd'] > 0) &  # MACD在零轴上方
+        (df['roc'] > 2) &  # ROC > 2%
+        (df['close'] > df['close'].shift(1)),  # 价格上涨
+        'enter_long',
+    ] = 1
+    return df
+
 # 回测引擎
 def run_backtest(strategy_func, strategy_name):
     print(f"\n---")
@@ -153,9 +177,8 @@ if __name__ == "__main__":
 
     run_backtest(mean_rev_rsi_strategy, "MeanRevRSI")
     run_backtest(trend_follow_strategy, "TrendFollow")
-    run_backtest(volatility_break_strategy, "VolatilityBreak")
+    run_backtest(macd_momentum_strategy, "MacdMomentum")
 
     print("\n" + "=" * 60)
-    print("第一轮回测完成！这是研究循环的开始...")
-    print("接下来 AI 会分析结果，然后改进策略")
+    print("Round 3 回测完成！替换VolatilityBreak为MacdMomentum")
     print("=" * 60)
