@@ -59,7 +59,7 @@ def volatility_break_strategy(df):
     return df
 
 def macd_momentum_strategy(df):
-    """MACD动量策略 - 最优版本 (Round 4配置)"""
+    """MACD动量策略 - Round 4配置 (多资产最优版本)"""
     # MACD计算
     exp1 = df['close'].ewm(span=12).mean()
     exp2 = df['close'].ewm(span=26).mean()
