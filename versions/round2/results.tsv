@@ -1,0 +1,5 @@
+commit	event	strategy_name	sharpe	max_dd	note
+8e23752	create	MeanRevRSI	0.1199	-32.25	初始创建 - BTC Sharpe 0.18, ETH 0.07. 使用 RSI+布林带均值回归. 等待完整数据验证多资产表现.
+8e23752	create	TrendFollow	0.1697	-30.97	初始创建 - BTC Sharpe 0.27, ETH 0.08. EMA交叉+动量趋势跟踪, 使用4h MTF确认. 表现最好.
+8e23752	create	VolatilityBreak	0.0318	-22.74	初始创建 - BTC Sharpe -0.16(亏损), ETH Sharpe 0.16. ATR+肯特纳通道波动突破. 整体Sharpe太低, 需要改进.
+5239c82	modify	VolatilityBreak	0.0215	-20.73	修复策略逻辑 - 改用kc_upper突破, 降低波动率阈值0.02→0.01, 添加SMA200趋势过滤. 结果: Sharpe反而下降(0.03→0.02), 信号后平均收益0.03%(几乎零), 胜率47.5%低于随机. 结论: 波动突破策略在当前市场条件下无效.
