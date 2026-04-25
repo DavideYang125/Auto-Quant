@@ -49,8 +49,8 @@ class VolatilityBreak(IStrategy):
         # 入场：价格突破肯特纳通道上轨 + 高波动率 + 1d上升趋势 + 价格上涨
         dataframe.loc[
             (dataframe["close"] > dataframe["kc_upper"]) &  # 突破上轨
-            (dataframe["volatility_ratio"] > 0.02) &  # 波动率足够高
-            (dataframe["close"] > dataframe["sma200"]) &  # 1d上升趋势过滤 (使用 sma200 而不是 sma200_1d)
+            (dataframe["volatility_ratio"] > 0.01) &  # 波动率足够高 (降低阈值: 0.02→0.01)
+            (dataframe["close"] > dataframe["sma200"]) &  # 1d上升趋势过滤
             (dataframe["close"] > dataframe["close"].shift(1)),  # 价格上涨
             "enter_long",
         ] = 1
