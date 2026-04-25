@@ -25,7 +25,7 @@ def mean_rev_rsi_strategy(df):
     return df
 
 def trend_follow_strategy(df):
-    """趋势跟踪策略 - 原始版本 (最优配置)"""
+    """趋势跟踪策略"""
     df['ema9'] = df['close'].ewm(span=9).mean()
     df['ema21'] = df['close'].ewm(span=21).mean()
     df['momentum'] = df['close'] / df['close'].shift(10) - 1
@@ -59,7 +59,7 @@ def volatility_break_strategy(df):
     return df
 
 def macd_momentum_strategy(df):
-    """MACD动量策略 - 最优版本 (Round 4配置)"""
+    """MACD动量策略 - Round 3 新策略"""
     # MACD计算
     exp1 = df['close'].ewm(span=12).mean()
     exp2 = df['close'].ewm(span=26).mean()
@@ -68,8 +68,6 @@ def macd_momentum_strategy(df):
     df['macd_hist'] = df['macd'] - df['macd_signal']
     # ROC - 变化率
     df['roc'] = (df['close'] / df['close'].shift(10) - 1) * 100
-    # 趋势过滤
-    df['sma50'] = df['close'].rolling(50).mean()
 
     # MACD金叉检测
     macd_cross = (df['macd'] > df['macd_signal']) & (df['macd'].shift(1) <= df['macd_signal'].shift(1))
@@ -78,8 +76,7 @@ def macd_momentum_strategy(df):
     df.loc[
         macd_cross &  # MACD金叉
         (df['macd'] > 0) &  # MACD在零轴上方
-        (df['roc'] > 1.5) &  # ROC > 1.5%
-        (df['close'] > df['sma50']) &  # 价格在50期均线上方
+        (df['roc'] > 2) &  # ROC > 2%
         (df['close'] > df['close'].shift(1)),  # 价格上涨
         'enter_long',
     ] = 1
