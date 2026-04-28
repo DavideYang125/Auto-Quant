@@ -5,15 +5,23 @@
 ```
 这是一个量化交易项目，路径：E:\demo\learn\aitrade\Auto-Quant
 
-之前的工作成果：
-1. 从Binance下载了BTC/ETH/SOL/BNB的历史数据
-2. 开发了BTC突破策略，回测Sharpe达到1.53
-3. 生成了详细的交易记录（416笔交易）
+项目背景：
+- 基于Auto-Quant框架，AI独立开发策略
+- AI代码在 my_research/ 目录，原项目代码在根目录
+- 详细说明见 FILE_STRUCTURE.md
+
+之前的研究结论（6个阶段）：
+1. 测试了3个基础策略（Sharpe 0.12-0.17）
+2. 参数优化到Sharpe 1.53（但发现是假象）
+3. 多年度回测发现策略跑输买入持有
+4. 测试了趋势跟踪、自适应、多因子策略
+5. 所有量化策略都难以跑赢"买入持有BTC"
+6. 阶梯建仓策略能降低回撤（-6% vs -25%）
 
 请按以下步骤操作：
-1. 阅读docs/目录下的所有文档
-2. 查看strategy_btc_final.py了解最终策略
-3. 查看git log了解开发历史
+1. 阅读 docs/strategies-guide.md 了解完整研究历史
+2. 阅读 FILE_STRUCTURE.md 了解文件结构
+3. 查看 my_research/ 目录了解AI生成的代码
 4. 告诉我当前状态，然后我们继续下一步
 ```
 
